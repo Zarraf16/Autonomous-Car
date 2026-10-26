@@ -1,101 +1,68 @@
-![Arduino](https://img.shields.io/badge/Platform-Arduino-blue)
-![Language](https://img.shields.io/badge/Language-C%2B%2B-blue)
-![Status](https://img.shields.io/badge/Status-In%20Development-green)
+# Dual-Mode F1 RC Car
 
-<img src="https://raw.githubusercontent.com/github/explore/main/topics/arduino/arduino.png" alt="Arduino Logo" width="60"/>
+**Arduino control • PID line following • Pixy2 vision • Custom PCB**
 
-# Autonomous-F1-Car 
-This is the repository for the Schoolcraft Engineering Club's Autonomous RC Car.
+A Schoolcraft Engineering Club vehicle project combining manual RC operation with autonomous line following and traffic-light detection. This portfolio fork preserves the team's source history and adds engineering documentation.
 
----
+## Engineering highlights
 
-## Features
+- **6 IR sensors** provide a weighted steering error for the PID controller.
+- **Pixy2 color signatures** identify red and green traffic-light targets.
+- **Arduino Nano, steering servo, and ESC** form the autonomous control system.
+- A **2-layer custom PCB** integrates power and signal connections within the chassis.
 
-  - IR line following
-  - Autonomous steering
-  - Pixy2 vision tracking (Traffic Light Detection)
+## PCB design contribution
+
+I contributed PCB design in EasyEDA as part of the Schoolcraft Engineering Club team: schematic capture, component placement, routing, and manufacturing preparation. The board measures **44.58 × 23.62 mm** and connects the controller, sensor array, steering servo, and ESC interfaces. Ground stitching vias connect the copper pours. The [engineering report](F1_RC_Car_Engineering_Report.pdf) documents the PCB and the wider team project.
+
+Vehicle design, firmware, mechanical work, integration, and testing were collaborative. This fork does not imply sole authorship of the original code.
+
+## How the autonomous mode works
+
+The sketch reads the six IR channels, calculates a weighted error, and applies PID steering with **Kp = 12.0, Ki = 0.1, Kd = 0.8**. It limits the integral and filters the derivative before constraining steering to 20–160 degrees.
+
+Pixy2 checks color signatures **1 (red)** and **3 (green)**. The current implementation acts on the first recognized red/green block and permits motion when neither is found. The ESC alternates forward and neutral commands during movement. Neutral is an ESC command, not a guaranteed braking distance.
+
+Manual/autonomous changeover was performed manually; this sketch does not implement automatic mode switching.
+
+## Repository guide
+
+| Path | Purpose |
+|---|---|
+| [AutonomousDrivingCode](AutonomousDrivingCode/) | Integrated autonomous driving sketch |
+| [libraries/IrSensorArray](libraries/IrSensorArray/) | Six-sensor validity and weighting logic |
+| [IRSensorTest](IRSensorTest/) | Sensor and PID steering test |
+| [ESCMotorTest](ESCMotorTest/) | ESC command test |
+| [PixyTest](PixyTest/) | Traffic-light signature test |
+| [ServoTest](ServoTest/) | Steering servo test |
+| [TrafficLightCode](TrafficLightCode/) | Separate red/green test-light controller |
+| [docs](docs/) | Original circuit drawings |
+| [Engineering report](F1_RC_Car_Engineering_Report.pdf) | Hardware, PCB design, testing, photos, and complete main-code listings |
 
 ## Setup
-  
-  1. Install Arduino IDE
-  2. Install required libraries:
-     - Pixy2
-     - Servo
-  3. Connect Arduino Nano
-  4. Upload `IRSensorCode.ino`
 
-## Required Arduino Libraries:
+1. Install Arduino IDE with support for the classic ATmega328P Arduino Nano.
+2. Install the **Pixy2** and **Servo** libraries.
+3. Copy `libraries/IrSensorArray` into your Arduino sketchbook's `libraries` directory and restart the IDE.
+4. Open `AutonomousDrivingCode/AutonomousDrivingCode.ino`.
+5. Select the correct Nano board, processor/bootloader, and port. Verify the wiring below and your ESC calibration.
+6. Train Pixy2 for the red/green targets and test the individual sketches before running the integrated vehicle. Perform initial motor tests with the driven wheels lifted.
 
-  - Pixy2
-  - Servo
-
-## Files/Structure:
-
-  - ### Main Arduino File:
-    ```text
-    <Filename>.ino
-    ```
-  - ### Header Files (Class and function declarations): <Filename>.hpp
-  - ### Source Files (Class and function definitions/implementations): <Filename>.cpp
-
-## How to Add Features:
-
-  1. Create .hpp header file for desired purpose.
-  2. Create a corresponding .cpp source file for implementation of the previous declarations.
-  3. Include the newly created header file and implement the desired logic.
-
-## Conventions:
-
-  - ### Naming Conventions
-      - Classes use *PascalCase*.
-        Ex: 
-        ```cpp
-        class TestClass {}
-        ```
-      - Functions/Variables use *camelCase*.
-        Ex:
-        ```cpp
-        <return_type> testFunction(<parameter_type> testVar) {}
-        ```
-      - Constants use *UPPERCASE*.
-        Ex:
-        ```cpp
-        #define PIN_1 1
-        ```
-
-## Hardware
-
-| Component | Model / Description |
+| Interface | Main-sketch pin |
 |---|---|
-| Microcontroller | Arduino Nano |
-| Vision Sensor | Pixy2 Smart Vision Sensor |
-| PCB | Custom PCB |
-| Motor Driver | L293 Motor Driver |
-| IR Sensors | 6x TCRT5000 IR Sensors |
-| Servo Motor | MG90S |
-| DC Motor | 540 Brushed Motor |
-| Battery | 2200mAh 7.4V LiPo Battery *(Any battery capable of powering both the DC motor and Arduino is sufficient)* |
+| Steering servo | A0 |
+| ESC signal | A4 |
+| Left IR sensors 1 / 2 / 3 | A5 / A6 / A7 |
+| Right IR sensors 1 / 2 / 3 | A3 / A2 / A1 |
 
-### PCB
-  <details>
-    <summary>PCB Schematics</summary>
-    <img width="540" height="400" alt="AutonomousDrivingDiagram" src="https://github.com/user-attachments/assets/f6952d57-76e0-4def-b580-c2eb2910e4d1" />
-  </details>
-  
-### Connections
- <details>
-    <summary>Tinkercad Design</summary>
-    <img width="2560" height="1180" alt="Autonomous Driving F1 Car" src="https://github.com/user-attachments/assets/1e04c08d-e821-4c5a-ad17-0cc251e29ae1" />
-  </details>
+Test sketches may use different pin assignments and pulse values. Earlier circuit drawings include an H-bridge configuration; the integrated sketch uses an ESC. Use the matching hardware revision.
 
-  - <a href="https://www.tinkercad.com/things/8e6ZMUtTsOs-autonomous-driving-f1-car/editel?returnTo=https%3A%2F%2Fwww.tinkercad.com%2Fdashboard%2Fdesigns%2Fcircuits">Tinkercad Link</a>
+## Development experience
 
----
+The team iterated on traffic-light color and shape and retrained Pixy2 during testing. Mechanical fit, printed-part durability, equipment delays, and balancing assembly with autonomous testing also influenced development.
 
-#### *Useful Links:*
-- <a href="https://www.circuit-diagram.org/">Schematics Creation Tool</a>
+This fork adds documentation without changing the archived firmware. Calibration, loss-of-line behavior, and traffic-light decision logic should be validated before reuse.
 
-- <a href="https://www.tinkercad.com/">Tinkercad</a>
+## Team and source credit
 
-  
-
+Developed collaboratively by the **Schoolcraft Engineering Club**. Original source maintained in [Ce3Pi0/Autonomous-Car](https://github.com/Ce3Pi0/Autonomous-Car), itself forked from [schoolcraftengineeringclub/Autonomous-Car](https://github.com/schoolcraftengineeringclub/Autonomous-Car). Portfolio documentation and PCB contribution: **Zarraf Alam Fahmid**. Original commit history is retained.
