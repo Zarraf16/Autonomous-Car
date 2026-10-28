@@ -15,6 +15,10 @@ A Schoolcraft Engineering Club vehicle project combining manual RC operation wit
 
 I contributed PCB design in EasyEDA as part of the Schoolcraft Engineering Club team: schematic capture, component placement, routing, and manufacturing preparation. The board measures **44.58 × 23.62 mm** and connects the controller, sensor array, steering servo, and ESC interfaces. Ground stitching vias connect the copper pours. The [engineering report](F1_RC_Car_Engineering_Report.pdf) documents the PCB and the wider team project.
 
+[View my PCB schematic, layouts, and assembly previews](docs/README.md)
+
+![My Arduino Nano interface PCB schematic](docs/pcb/schematic.png)
+
 Vehicle design, firmware, mechanical work, integration, and testing were collaborative. This fork does not imply sole authorship of the original code.
 
 ## How the autonomous mode works
@@ -36,7 +40,7 @@ Manual/autonomous changeover was performed manually; this sketch does not implem
 | [PixyTest](PixyTest/) | Traffic-light signature test |
 | [ServoTest](ServoTest/) | Steering servo test |
 | [TrafficLightCode](TrafficLightCode/) | Separate red/green test-light controller |
-| [docs](docs/) | Original circuit drawings |
+| [PCB design documentation](docs/README.md) | My EasyEDA schematic, PCB routing, copper pours, assembly previews, and pin-revision notes |
 | [Engineering report](F1_RC_Car_Engineering_Report.pdf) | Hardware, PCB design, testing, photos, and complete main-code listings |
 
 ## Setup
@@ -55,7 +59,7 @@ Manual/autonomous changeover was performed manually; this sketch does not implem
 | Left IR sensors 1 / 2 / 3 | A5 / A6 / A7 |
 | Right IR sensors 1 / 2 / 3 | A3 / A2 / A1 |
 
-Test sketches may use different pin assignments and pulse values. Earlier circuit drawings include an H-bridge configuration; the integrated sketch uses an ESC. Use the matching hardware revision.
+Test sketches may use different pin assignments and pulse values. The supplied PCB schematic and archived integrated sketch differ at the ESC, left IR 1, and left IR 2 pins. See the [hardware/firmware revision table](docs/README.md#hardware-and-firmware-revision-check) before wiring or uploading.
 
 ## Development experience
 
